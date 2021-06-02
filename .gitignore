@@ -1,7 +1,11 @@
+# python
 .env
-
 *.pyc
 __pycache_
 
+# project runtime data
 media
 db.sqlite3
+
+# editors
+.idea

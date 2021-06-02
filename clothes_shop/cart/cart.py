@@ -30,7 +30,7 @@ class Cart:
                 'quantity': quantity,
                 'price': str(product.price),
                 }
-        if update_quantity:
+        if not update_quantity:
             self.cart[product_id]['quantity'] = quantity
         else:
             self.cart[product_id]['quantity'] += quantity
@@ -58,7 +58,7 @@ class Cart:
         """
         get summary price of all products in cart
         """
-        return sum(Decimal(item['price']) * item ['quantity'] 
+        return sum(Decimal(item['price']) * item['quantity']
                    for item in self.cart.values())
     
     def clear(self):
