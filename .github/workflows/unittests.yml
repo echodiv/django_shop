@@ -1,0 +1,24 @@
+name: Test Workflow
+
+on: push
+
+jobs:
+ tests:
+   runs-on: ubuntu-latest
+   steps:
+   - name: Checkout Code
+     uses: actions/checkout@v2
+   - name: Install python modules
+     run: sudo apt install -y --no-install-recommends python3-venv python3-setuptools
+   - name: Install pip packages
+     run: |
+       python3 -m venv .env
+       . .env/bin/activate
+       pip install -r requirements.txt
+     env:
+       PIPENV_VENV_IN_PROJECT: 1
+   - name: Run tests
+     run: |
+       . .env/bin/activate
+       cd clothes_shop
+       python manage.py test
