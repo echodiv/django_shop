@@ -21,4 +21,4 @@ jobs:
      run: |
        . .env/bin/activate
        cd clothes_shop
-       python manage.py test
+       python manage.py test --verbosity 2

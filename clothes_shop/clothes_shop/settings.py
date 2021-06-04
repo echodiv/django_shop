@@ -26,8 +26,12 @@ SECRET_KEY = 'django-insecure-wg9ih0(ji(h2m4sdohyt#w(^%v^nonf=njz^wve*@0*+_#(+m=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
 # Application definition
 
