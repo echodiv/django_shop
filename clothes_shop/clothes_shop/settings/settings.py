@@ -146,3 +146,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 CART_SESSION_ID = 'cart'
 
 SITE_ID = 1
+
+# Send email messages to console output
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
