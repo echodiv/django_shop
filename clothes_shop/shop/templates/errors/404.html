@@ -1,0 +1,19 @@
+<!--{% load static %}-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}404 не найдено{% endblock %}</title>
+        <link href="{% static 'css/errors.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <h1>404 страница не найдена</h1>
+        <p class="zoom-area">К сожалению мы не смогли найти запрашиваемую страницу</p>
+        <section class="error-container">
+            <span>4</span>
+            <span>
+                <span class="screen-reader-text">0</span>
+            </span>
+            <span>4</span>
+        </section>
+    </body>
+</html>

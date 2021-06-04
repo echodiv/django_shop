@@ -1,8 +1,15 @@
 from django.conf import settings
-from django.conf.urls import include, url
+from django.conf.urls import (
+    include, url, handler400, handler403, handler404, handler500
+)
 from django.conf.urls.static import static
 from django.contrib import admin
 
+
+handler400 = 'shop.views.error_bad_request'
+handler403 = 'shop.views.error_permission_denied'
+handler404 = 'shop.views.error_page_not_found'
+handler500 = 'shop.views.error_server_error'
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

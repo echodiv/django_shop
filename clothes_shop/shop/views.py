@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.template import RequestContext
 
 from cart.forms import CartAddProductForm
 
@@ -35,3 +36,27 @@ def product_detail(request, id, slug):
                   'shop/product/details.html',
                   {'product': product, 
                    'cart_product_form': cart_product_form})
+
+
+def error_bad_request(request, exception):
+    response = render(request, 'errors/404.html', {})
+    response.status_code = 400
+    return response
+
+
+def error_page_not_found(request, exception):
+    response = render(request, 'errors/404.html', RequestContext())
+    response.status_code = 404
+    return response
+
+
+def error_permission_denied(request, exception):
+    response = render(request, 'errors/404.html', {})
+    response.status_code = 403
+    return response
+
+
+def error_server_error(request):
+    response = render(request, 'errors/404.html', {})
+    response.status_code = 500
+    return response
