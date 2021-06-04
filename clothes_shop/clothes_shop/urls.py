@@ -14,6 +14,7 @@ handler500 = 'shop.views.error_server_error'
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^cart/', include('cart.urls', namespace='cart')),
+    url(r'^orders/', include('orders.urls', namespace='orders')),
     url(r'^', include('shop.urls', namespace='shop')),
 ]
 

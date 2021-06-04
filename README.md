@@ -1,7 +1,12 @@
 # CLOTHES SHOP 
-## Make with Django
+#### Make with Django
 
-### docker 
+### Applications
+#### 1. Shop
+#### 2. Cart
+#### 3. Orders
+
+### Docker 
 ```bash
 # build docker image from ./
 sudo docker build -t shop .
