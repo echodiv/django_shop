@@ -42,6 +42,35 @@ def export_to_csv(modeladmin, request, queryset):
 export_to_csv.short_description = 'Export to CSV'
 
 
+def export_to_pdf(modeladmin, request, queryset):
+    opts = modeladmin.model._meta
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="{0}"'.format(
+        opts.verbose_name
+    )
+
+    data = [['Action Time', 'Priority', 'username', 'Source Address', 'Subject', 'Details']]
+    for d in queryset.all():
+        datetime_str = str(d.action_time).split('.')[0]
+        item = [datetime_str, d.priority, d.username, d.source_address, d.subject, d.details]
+        data.append(item)
+
+    doc = SimpleDocTemplate(response, pagesize=(21*inch, 29*inch))
+    elements = []
+
+    table_data = Table(data)
+    table_data.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                                    ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                                    ("FONTSIZE",  (0, 0), (-1, -1), 13)]))
+    elements.append(table_data)
+    doc.build(elements)
+
+    return response
+
+
+export_to_pdf = 'Export to PDF'
+
+
 class OrderAdmin(admin.ModelAdmin):
     model = Order
     list_display = ['id', 'first_name', 'last_name', 'email',
