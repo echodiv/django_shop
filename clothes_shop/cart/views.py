@@ -1,13 +1,14 @@
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View
 
 from shop.models import Product
+from coupons.forms import CouponApplyForm
 
 from .cart import Cart
 from .forms import CartAddProductForm
 
 
-class CartView(View):
+class CartManagerView(View):
     """
     Представление продуктовой корзины покупателя
 
@@ -45,3 +46,22 @@ class CartView(View):
         product = get_object_or_404(Product, id=product_id)
         cart.remove(product)
         return redirect('cart:cart_detail')
+
+
+class CartView(View):
+    """
+    Представление корзины с учётом примененного скидочного купона
+    """
+    @staticmethod
+    def get(request):
+        cart = Cart(request)
+        for item in cart:
+            item['update_quantity_form'] = CartAddProductForm(
+                initial={
+                    'quantity': item['quantity'],
+                    'update': True,
+                }
+            )
+        coupon_apply_form = CouponApplyForm()
+        return render(request, 'cart/details.html',
+                      {'cart': cart, 'coupon_apply_form': coupon_apply_form})

@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 
+from coupons.models import Coupon
 from shop.models import Product
 
 
@@ -13,12 +14,35 @@ class Cart:
         save data in user session
         """
         self.session = request.session
+        # TODO: str coupon_id move to config
+        self.coupon_id = self.session.get('coupon_id')
 
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         
         self.cart = cart
+
+    @property
+    def coupon(self):
+        """
+        Купон примененный к текущей корзине (сессии)
+        """
+        # TODO: обработка ошибки получения купона
+        if self.coupon_id:
+            return Coupon.objects.get(id=self.coupon_id)
+        return None
+
+    @coupon.deleter
+    def coupon(self):
+        """
+        Удаление купона
+        """
+        try:
+            del self.coupon_id
+            del self.session['coupon_id']
+        except (KeyError, NameError):
+            return None
     
     def add(self, product, quantity=1, update_quantity=False):
         """
@@ -67,6 +91,22 @@ class Cart:
         """
         del self.session[settings.CART_SESSION_ID]
         self.session.modified = True
+
+    def get_discount(self):
+        """
+        ВОзвращает размер скиндня для всей корзины (товаров находящихся в ней)
+        """
+        if self.coupon:
+            return (self.coupon.discount / Decimal(
+                '100')) * self.get_total_price()
+        return Decimal('0')
+
+    def get_total_price_after_discount(self):
+        """
+        Возвращает финальную стоимость всех товаров в корзине после применения
+        скиндочного купона
+        """
+        return self.get_total_price() - self.get_discount()
     
     def __iter__(self):
         for product in Product.objects.filter(id__in=self.cart.keys()):

@@ -21,6 +21,7 @@ class OrderView(View):
         """
         Обработка формы создания нового заказа
         - проверка валидности данных
+        - применение купона к заказу
         - создание заказа
         - очистка корзины
         - показ страницы успешной регистрации заказа
@@ -30,7 +31,13 @@ class OrderView(View):
         form = OrderCreateForm(request.POST)
         # TODO: if not form.is_valid()
         if form.is_valid():
-            order = form.save()
+            order = form.save(commit=False)
+            if cart.coupon:
+                order.coupon = cart.coupon
+                order.discount = cart.coupon.discount
+                del cart.coupon
+            order.save()
+
             for item in cart:
                 OrderItem.objects.create(order=order,
                                          product=item['product'],

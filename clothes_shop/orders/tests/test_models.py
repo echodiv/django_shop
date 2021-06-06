@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 
 from shop.models import Category, Product
+from coupons.models import Coupon
 
 from ..models import Order, OrderItem
 
@@ -9,13 +12,20 @@ class BaseModelTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super(BaseModelTestCase, cls).setUpClass()
+        coupon = Coupon(
+            code='sale', valid_from=datetime.now(), discount=10, active=True,
+            valid_to=datetime.now()+timedelta(days=10)
+        )
+        coupon.save()
+        cls.order_sale = Order(
+            first_name='Имя', last_name='Фамилия', email='mail@mail.mail',
+            address='Улица, дом 1', postal_code='123', city='Город',
+            discount=10, coupon=coupon
+        )
+        cls.order_sale.save()
         cls.order = Order(
-            first_name='Имя',
-            last_name='Фамилия',
-            email='mail@mail.mail',
-            address='Улица, дом 1',
-            postal_code='123',
-            city='Город',
+            first_name='Имя', last_name='Фамилия', email='mail@mail.mail',
+            address='Улица, дом 1', postal_code='123', city='Город'
         )
         cls.order.save()
         category = Category(name='category_name', slug='category_slug')
@@ -33,10 +43,15 @@ class BaseModelTestCase(TestCase):
         )
         cls.order_item_2 = OrderItem(
             order=cls.order, product=product_2, price=product_2.price,
-            quantity=5,
+            quantity=5
         )
         cls.order_item_1.save()
         cls.order_item_2.save()
+        cls.order_sale_item = OrderItem(
+            order=cls.order_sale, product=product_2, price=product_2.price,
+            quantity=5
+        )
+        cls.order_sale_item.save()
 
 
 class OrderModelTest(BaseModelTestCase):
@@ -47,11 +62,20 @@ class OrderModelTest(BaseModelTestCase):
         self.assertEqual(len(self.order.items.all()), 2,
                          'Order does not contain two item')
 
-    def test_total_coast_of_all_items_in_order(self):
+    def test_total_coast_of_all_items_in_order_without_discount(self):
         self.assertEqual(self.order.get_total_cost(), 30,
                          'Total coast is not valid. Expected {}, got {}'.format(
                              30, self.order.get_total_cost()
                          ))
+
+    def test_total_coast_of_all_items_in_order_wit_ten_present_discount(self):
+        self.assertEqual(self.order_sale.get_total_cost(), 22.5,
+                         'Total coast is not valid. Expected {}, got {}'.format(
+                             30, self.order.get_total_cost()
+                         ))
+
+    def test_default_discount_is_zero(self):
+        self.assertEqual(self.order.discount, 0, 'Default discount is not zero')
 
 
 class OrderItemModelTest(BaseModelTestCase):
