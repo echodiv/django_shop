@@ -1,10 +1,17 @@
 # CLOTHES SHOP 
 #### Make with Django
 
+### Local environment variables:
+```buildoutcfg
+DJANGO_ENV - current django enviorement [DEV | TEST | OTHER]
+if django enviorement variable is not exist or not [DEV | TEST]
+django run as production server
+```
 ### Applications
 #### 1. Shop
 #### 2. Cart
 #### 3. Orders
+#### 4. Coupons
 
 ### Docker 
 ```bash
